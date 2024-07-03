@@ -57,6 +57,9 @@ Additional documents describe how the light client sync protocol can be used:
 - [Light client](./light-client.md)
 - [Networking](./p2p-interface.md)
 
+The [fork document](./fork.md) explains how to upgrade existing Altair based deployments to Capella.
+
+
 ## Custom types
 
 | Name | SSZ equivalent | Description |
@@ -64,6 +67,7 @@ Additional documents describe how the light client sync protocol can be used:
 | `FinalityBranch` | `Vector[Bytes32, floorlog2(FINALIZED_ROOT_GINDEX)]` | Merkle branch of `finalized_checkpoint.root` within `BeaconState` |
 | `CurrentSyncCommitteeBranch` | `Vector[Bytes32, floorlog2(CURRENT_SYNC_COMMITTEE_GINDEX)]` | Merkle branch of `current_sync_committee` within `BeaconState` |
 | `NextSyncCommitteeBranch` | `Vector[Bytes32, floorlog2(NEXT_SYNC_COMMITTEE_GINDEX)]` | Merkle branch of `next_sync_committee` within `BeaconState` |
+| `ExecutionBranch` | `Vector[Bytes32, floorlog2(EXECUTION_PAYLOAD_GINDEX)]` | Merkle branch of `execution_payload` within `BeaconBlockBody` |
 
 ## Constants
 
@@ -72,7 +76,7 @@ Additional documents describe how the light client sync protocol can be used:
 | `FINALIZED_ROOT_GINDEX` | `get_generalized_index(BeaconState, 'finalized_checkpoint', 'root')` (= 105) |
 | `CURRENT_SYNC_COMMITTEE_GINDEX` | `get_generalized_index(BeaconState, 'current_sync_committee')` (= 54) |
 | `NEXT_SYNC_COMMITTEE_GINDEX` | `get_generalized_index(BeaconState, 'next_sync_committee')` (= 55) |
-
+| `EXECUTION_PAYLOAD_GINDEX` | `get_generalized_index(BeaconBlockBody, 'execution_payload')` (= 25) |
 ## Preset
 
 ### Misc
@@ -90,6 +94,9 @@ Additional documents describe how the light client sync protocol can be used:
 class LightClientHeader(Container):
     # Beacon block header
     beacon: BeaconBlockHeader
+    # Execution payload header corresponding to `beacon.body_root` (from Capella onward)
+    execution: ExecutionPayloadHeader
+    execution_branch: ExecutionBranch
 ```
 
 Future upgrades may introduce additional fields to this structure, and validate them by extending [`is_valid_light_client_header`](#is_valid_light_client_header).
@@ -171,12 +178,37 @@ class LightClientStore(object):
 
 ## Helper functions
 
+### `get_lc_execution_root`
+
+```python
+def get_lc_execution_root(header: LightClientHeader) -> Root:
+    epoch = compute_epoch_at_slot(header.beacon.slot)
+
+    if epoch >= CAPELLA_FORK_EPOCH:
+        return hash_tree_root(header.execution)
+
+    return Root()
+```
+
 ### `is_valid_light_client_header`
 
 ```python
 def is_valid_light_client_header(header: LightClientHeader) -> bool:
-    # pylint: disable=unused-argument
-    return True
+    epoch = compute_epoch_at_slot(header.beacon.slot)
+
+    if epoch < CAPELLA_FORK_EPOCH:
+        return (
+            header.execution == ExecutionPayloadHeader()
+            and header.execution_branch == ExecutionBranch()
+        )
+
+    return is_valid_merkle_branch(
+        leaf=get_lc_execution_root(header),
+        branch=header.execution_branch,
+        depth=floorlog2(EXECUTION_PAYLOAD_GINDEX),
+        index=get_subtree_index(EXECUTION_PAYLOAD_GINDEX),
+        root=header.beacon.body_root,
+    )
 ```
 
 ### `is_sync_committee_update`
