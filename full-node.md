@@ -62,6 +62,12 @@ def block_to_light_client_header(block: SignedBeaconBlock) -> LightClientHeader:
             transactions_root=hash_tree_root(payload.transactions),
             withdrawals_root=hash_tree_root(payload.withdrawals),
         )
+
+        # [New in Deneb:EIP4844]
+        if epoch >= DENEB_FORK_EPOCH:
+            execution_header.blob_gas_used = payload.blob_gas_used
+            execution_header.excess_blob_gas = payload.excess_blob_gas
+
         execution_branch = ExecutionBranch(
             compute_merkle_proof(block.message.body, EXECUTION_PAYLOAD_GINDEX))
     else:

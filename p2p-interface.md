@@ -77,11 +77,12 @@ Per `context = compute_fork_digest(fork_version, genesis_validators_root)`:
 
 [0]: # (eth2spec: skip)
 
-| `fork_version`                                         | Message SSZ type                      |
-| ------------------------------------------------------ | ------------------------------------- |
-| `GENESIS_FORK_VERSION`                                 | n/a                                   |
-| `ALTAIR_FORK_VERSION` through `BELLATRIX_FORK_VERSION` | `altair.LightClientFinalityUpdate`    |
-| `CAPELLA_FORK_VERSION` and later                       | `capella.LightClientFinalityUpdate`   |
+| `fork_version`                                         | Message SSZ type                    |
+|--------------------------------------------------------|-------------------------------------|
+| `GENESIS_FORK_VERSION`                                 | n/a                                 |
+| `ALTAIR_FORK_VERSION` through `BELLATRIX_FORK_VERSION` | `altair.LightClientFinalityUpdate`  |
+| `CAPELLA_FORK_VERSION`                                 | `capella.LightClientFinalityUpdate` |
+| `DENEB_FORK_VERSION` and later                         | `deneb.LightClientFinalityUpdate`   |
 
 ###### `light_client_optimistic_update`
 
@@ -107,10 +108,11 @@ Per `context = compute_fork_digest(fork_version, genesis_validators_root)`:
 [0]: # (eth2spec: skip)
 
 | `fork_version`                                         | Message SSZ type                      |
-| ------------------------------------------------------ | ------------------------------------- |
+|--------------------------------------------------------|---------------------------------------|
 | `GENESIS_FORK_VERSION`                                 | n/a                                   |
 | `ALTAIR_FORK_VERSION` through `BELLATRIX_FORK_VERSION` | `altair.LightClientOptimisticUpdate`  |
-| `CAPELLA_FORK_VERSION` and later                       | `capella.LightClientOptimisticUpdate` |
+| `CAPELLA_FORK_VERSION`                                 | `capella.LightClientOptimisticUpdate` |
+| `DENEB_FORK_VERSION` and later                         | `deneb.LightClientOptimisticUpdate`   |
 
 ### The Req/Resp domain
 
@@ -150,11 +152,12 @@ Per `context = compute_fork_digest(fork_version, genesis_validators_root)`:
 
 [0]: # (eth2spec: skip)
 
-| `fork_version`                                         | Response SSZ type                     |
-| ------------------------------------------------------ | ------------------------------------- |
-| `GENESIS_FORK_VERSION`                                 | n/a                                   |
-| `ALTAIR_FORK_VERSION` through `BELLATRIX_FORK_VERSION` | `altair.LightClientBootstrap`         |
-| `CAPELLA_FORK_VERSION` and later                       | `capella.LightClientBootstrap`        |
+| `fork_version`                                         | Response SSZ type                  |
+|--------------------------------------------------------|------------------------------------|
+| `GENESIS_FORK_VERSION`                                 | n/a                                |
+| `ALTAIR_FORK_VERSION` through `BELLATRIX_FORK_VERSION` | `altair.LightClientBootstrap`      |
+| `CAPELLA_FORK_VERSION`                                 | `capella.LightClientBootstrap`     |
+| `DENEB_FORK_VERSION` and later                         | `deneb.LightClientBootstrap`       |
 
 ##### LightClientUpdatesByRange
 
@@ -189,11 +192,12 @@ Per `context = compute_fork_digest(fork_version, genesis_validators_root)`:
 
 [0]: # (eth2spec: skip)
 
-| `fork_version`                                         | Response chunk SSZ type               |
-| ------------------------------------------------------ | ------------------------------------- |
-| `GENESIS_FORK_VERSION`                                 | n/a                                   |
-| `ALTAIR_FORK_VERSION` through `BELLATRIX_FORK_VERSION` | `altair.LightClientUpdate`            |
-| `CAPELLA_FORK_VERSION` and later                       | `capella.LightClientUpdate`           |
+| `fork_version`                                         | Response chunk SSZ type          |
+|--------------------------------------------------------|----------------------------------|
+| `GENESIS_FORK_VERSION`                                 | n/a                              |
+| `ALTAIR_FORK_VERSION` through `BELLATRIX_FORK_VERSION` | `altair.LightClientUpdate`       |
+| `CAPELLA_FORK_VERSION`                                 | `capella.LightClientUpdate`      |
+| `DENEB_FORK_VERSION` and later                         | `deneb.LightClientUpdate`        |
 
 ##### GetLightClientFinalityUpdate
 
@@ -221,11 +225,12 @@ Per `context = compute_fork_digest(fork_version, genesis_validators_root)`:
 
 [0]: # (eth2spec: skip)
 
-| `fork_version`                                         | Response SSZ type                     |
-| ------------------------------------------------------ | ------------------------------------- |
-| `GENESIS_FORK_VERSION`                                 | n/a                                   |
-| `ALTAIR_FORK_VERSION` through `BELLATRIX_FORK_VERSION` | `altair.LightClientFinalityUpdate`    |
-| `CAPELLA_FORK_VERSION` and later                       | `capella.LightClientFinalityUpdate`   |
+| `fork_version`                                         | Response SSZ type                   |
+|--------------------------------------------------------|-------------------------------------|
+| `GENESIS_FORK_VERSION`                                 | n/a                                 |
+| `ALTAIR_FORK_VERSION` through `BELLATRIX_FORK_VERSION` | `altair.LightClientFinalityUpdate`  |
+| `CAPELLA_FORK_VERSION`                                 | `capella.LightClientFinalityUpdate` |
+| `DENEB_FORK_VERSION` and later                         | `deneb.LightClientFinalityUpdate`   |
 
 ##### GetLightClientOptimisticUpdate
 
@@ -254,10 +259,11 @@ Per `context = compute_fork_digest(fork_version, genesis_validators_root)`:
 [0]: # (eth2spec: skip)
 
 | `fork_version`                                         | Response SSZ type                     |
-| ------------------------------------------------------ | ------------------------------------- |
+|--------------------------------------------------------|---------------------------------------|
 | `GENESIS_FORK_VERSION`                                 | n/a                                   |
 | `ALTAIR_FORK_VERSION` through `BELLATRIX_FORK_VERSION` | `altair.LightClientOptimisticUpdate`  |
-| `CAPELLA_FORK_VERSION` and later                       | `capella.LightClientOptimisticUpdate` |
+| `CAPELLA_FORK_VERSION`                                 | `capella.LightClientOptimisticUpdate` |
+| `DENEB_FORK_VERSION` and later                         | `deneb.LightClientOptimisticUpdate`   |
 
 ## Light clients
 

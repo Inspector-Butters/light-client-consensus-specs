@@ -21,6 +21,7 @@
   - [`LightClientOptimisticUpdate`](#lightclientoptimisticupdate)
   - [`LightClientStore`](#lightclientstore)
 - [Helper functions](#helper-functions)
+  - [`get_lc_execution_root`](#get_lc_execution_root)
   - [`is_valid_light_client_header`](#is_valid_light_client_header)
   - [`is_sync_committee_update`](#is_sync_committee_update)
   - [`is_finality_update`](#is_finality_update)
@@ -57,7 +58,8 @@ Additional documents describe how the light client sync protocol can be used:
 - [Light client](./light-client.md)
 - [Networking](./p2p-interface.md)
 
-The [fork document](./fork.md) explains how to upgrade existing Altair based deployments to Capella.
+The [fork document](./fork-capella.md) explains how to upgrade existing Altair based deployments to Capella.
+The [fork document](./fork-deneb.md) explains how to upgrade existing Capella based deployments to Deneb.
 
 
 ## Custom types
@@ -184,8 +186,30 @@ class LightClientStore(object):
 def get_lc_execution_root(header: LightClientHeader) -> Root:
     epoch = compute_epoch_at_slot(header.beacon.slot)
 
-    if epoch >= CAPELLA_FORK_EPOCH:
+    # [New in Deneb]
+    if epoch >= DENEB_FORK_EPOCH:
         return hash_tree_root(header.execution)
+
+    # [Modified in Deneb]
+    if epoch >= CAPELLA_FORK_EPOCH:
+        execution_header = capella.ExecutionPayloadHeader(
+            parent_hash=header.execution.parent_hash,
+            fee_recipient=header.execution.fee_recipient,
+            state_root=header.execution.state_root,
+            receipts_root=header.execution.receipts_root,
+            logs_bloom=header.execution.logs_bloom,
+            prev_randao=header.execution.prev_randao,
+            block_number=header.execution.block_number,
+            gas_limit=header.execution.gas_limit,
+            gas_used=header.execution.gas_used,
+            timestamp=header.execution.timestamp,
+            extra_data=header.execution.extra_data,
+            base_fee_per_gas=header.execution.base_fee_per_gas,
+            block_hash=header.execution.block_hash,
+            transactions_root=header.execution.transactions_root,
+            withdrawals_root=header.execution.withdrawals_root,
+        )
+        return hash_tree_root(execution_header)
 
     return Root()
 ```
@@ -195,6 +219,11 @@ def get_lc_execution_root(header: LightClientHeader) -> Root:
 ```python
 def is_valid_light_client_header(header: LightClientHeader) -> bool:
     epoch = compute_epoch_at_slot(header.beacon.slot)
+
+    # [New in Deneb:EIP4844]
+    if epoch < DENEB_FORK_EPOCH:
+        if header.execution.blob_gas_used != uint64(0) or header.execution.excess_blob_gas != uint64(0):
+            return False
 
     if epoch < CAPELLA_FORK_EPOCH:
         return (
